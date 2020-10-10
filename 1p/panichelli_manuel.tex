@@ -4,10 +4,18 @@
 \usepackage[utf8]{inputenc} 
 %\usepackage[spanish]{babel} 
 
+% Para hipervinculos en las referencias
+\usepackage{hyperref}
 
 \usepackage{amsmath,amsfonts,amssymb,amsthm,epsfig,epstopdf,titling,url,array}
 \usepackage{fullpage}
 \usepackage{fancyhdr}
+
+% Teoremas, corolarios, etc.
+% https://www.overleaf.com/learn/latex/theorems_and_proofs
+\theoremstyle{definition} % Para que no salga en italicas
+\newtheorem{theorem}{Teorema}
+\newtheorem{lemma}{Lema}
 
 \pagestyle{fancyplain}
 \fancyhf{}
@@ -19,7 +27,7 @@
 \lhead{L.U. 72/18}
 
 % Distancia del header (\chead) al texto
-\setlength{\headsep}{0.5cm}
+%\setlength{\headsep}{3pt}
 
 \title{1er Parcial AED3: Parte Domiciliaria}
 \author{Manuel Panichelli, 72/18}
@@ -27,13 +35,37 @@
 
 \begin{document}
 
-
 \maketitle
 \newpage
 
 \chapter*{Preámbulo}
 
-Poner teoremas/ejercicios utilizados
+Teoremas / Ejercicios utilizados.
+
+\section{Arboles}
+
+\begin{theorem}[Definiciones equivalentes de árbol]\label{teo:tree-equiv}
+    Dado $G = (V, X)$ un grafo, las siguientes son equivalentes:
+
+    \begin{enumerate}
+        \item G es un árbol, un grafo conexo sin circuitos simples.
+        \item G es un grafo sin circuitos simples, y $e$ arista tq $e \notin X$,
+        el grafo $G + e$ tiene exactamente un circuito simple el cual contiene a
+        $e$.\label{teo:tree-equiv-circ}
+        \item G es conexo, pero si se saca cualquier arista queda un grafo no
+        conexo. Es decir, toda arista es puente.\label{teo:tree-equiv-puentes}
+    \end{enumerate}
+\end{theorem}
+
+\begin{lemma}\label{lema:tree-g-e}
+    Sea $G = (V, X)$ conexo y $e \in X$.
+
+    \[ G - e \ \text{es conexo} \iff \text{e pertenece a un circuito simple de G} \]
+\end{lemma}
+
+\begin{theorem}\label{teo:tree-t-e-f}
+    Sean $T = (V, X_T)$ un AG de $G = (V, X)$, $e \in X \setminus X_T$. Luego $T + e - f$ con $f$ una arista del único circuito de $G+e$ es AG de $G$.
+\end{theorem}
 
 \chapter*{Resolución}
 
@@ -44,6 +76,32 @@ Poner teoremas/ejercicios utilizados
 \section*{Ejercicio 3}
 
 \section*{Ejercicio 4}
+
+\textit{Un \textbf{puente} de un grafo es un eje del grafo tal que al removerlo
+se obtiene un grafo con más c.cs. Sea $G = (V, X)$ un grafo conexo y $e \in X$.
+Demostrar que e es un puente de G sii e pertenece a todo AG de G.}
+
+\begin{proof}[Dem]
+    Demostremos la ida y la vuelta.
+
+    \quad
+
+    $\Rightarrow$)
+    Sea $e$ puente de G. qvq pertenece a todo AG de G.\\
+    Va por el absurdo: supongo que no pertenece a ningún árbol generador de G, y sea $T = (V, X_T)$ uno cualquiera. Como $e \notin T$, por (\ref{teo:tree-equiv}.\ref{teo:tree-equiv-circ}), $T + e$ tiene exactamente un circuito simple $C$, el cual contiene a e. Sea $f \in C, f \in X_T$. Como $f$ pertenece al único circuito de $T + e$, por (\ref{teo:tree-t-e-f}) el árbol $T' = T + e - f$ es árbol generador de G, y $e \in T'$. Pero estabamos suponiendo que $e$ no pertenecía a ningún AG de G. Abs! Entonces pertenece a todos.
+
+    \quad
+
+    $\Leftarrow$)
+    Como $e$ pertenece a todo AG de G, y por
+    (\ref{teo:tree-equiv}.\ref{teo:tree-equiv-puentes}) todas las aristas de un
+    arbol son puente, en particular $e$ es puente de G.
+
+\end{proof}
+
+
+
+
 
 \section*{Ejercicio 5}
 
