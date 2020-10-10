@@ -1,0 +1,17 @@
+Duda ej 5
+
+tropi: Tengo una duda con el enunciado del ejercicio 5. Este dice que pasar por cada peaje tiene un costo ci, y luego menciona el costo cij, para viajar del peaje i al j. Mi duda es: Si cuando yo estoy en cierto peaje i y quiero viajar a otro peaje j, ¿tengo que considerar el costo de viajar del i al j, es decir cij, más el costo de pasar por el peaje al que llegue cj? También me preguntaba si, en este caso, yo tengo que si o si haber pagado el costo ci, es decir haber pasado por el peaje donde me encuentro para poder utilizar los caminos que salen de este a otros.
+
+- c_ij es exclusivamente el costo de viajar desde el peaje i al j.  Es
+decir, aca no hay costos de peaje contabilizado.
+- c_i el el costo de pagar el peaje i y no tiene contabilizado ningun viaje.
+
+Por peaje se entiende que para tomar una ruta que sale de un peaje i,
+hay que pagar su costo de peaje i. Yo no puedo ir de i a k tomando las
+rutas ij seguida de jk sin pagar el peaje de j.
+
+Para finalizar, para tu pregunta ¿tengo que considerar el costo de
+viajar del i al j, es decir cij, más el costo de pasar por el peaje al
+que llegue cj? la respuesta es depende de qué quieras modelar.  Es
+decir, vos tenes que contarnos qué costos se pagarian para obtener una
+ganancia si recorremos infinitamente.

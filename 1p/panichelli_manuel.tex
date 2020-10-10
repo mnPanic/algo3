@@ -7,6 +7,19 @@
 % Para hipervinculos en las referencias
 \usepackage{hyperref}
 
+% Para enumerate con letras
+\usepackage[shortlabels]{enumitem}
+
+% Para dibujar grafos
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+
+% Figuras y subfiguras
+\usepackage{caption}
+\usepackage{subcaption} % subfiguras
+\usepackage{float}      % [H] en figuras
+
+% Simbolos matematicos
 \usepackage{amsmath,amsfonts,amssymb,amsthm,epsfig,epstopdf,titling,url,array}
 \usepackage{fullpage}
 \usepackage{fancyhdr}
@@ -84,25 +97,120 @@ Demostrar que e es un puente de G sii e pertenece a todo AG de G.}
 \begin{proof}[Dem]
     Demostremos la ida y la vuelta.
 
-    \quad
+    \begin{enumerate}
+        \item[$\Rightarrow$)] Sea $e$ puente de G. qvq pertenece a todo AG de G.\\
+        Va por el absurdo: supongo que no pertenece a ningún árbol generador de G, y sea $T = (V, X_T)$ uno cualquiera. Como $e \notin T$, por (\ref{teo:tree-equiv}.\ref{teo:tree-equiv-circ}), $T + e$ tiene exactamente un circuito simple $C$, el cual contiene a e. Sea $f \in C, f \in X_T$. Como $f$ pertenece al único circuito de $T + e$, por (\ref{teo:tree-t-e-f}) el árbol $T' = T + e - f$ es árbol generador de G, y $e \in T'$. Pero estabamos suponiendo que $e$ no pertenecía a ningún AG de G. Abs! Entonces pertenece a todos.
 
-    $\Rightarrow$)
-    Sea $e$ puente de G. qvq pertenece a todo AG de G.\\
-    Va por el absurdo: supongo que no pertenece a ningún árbol generador de G, y sea $T = (V, X_T)$ uno cualquiera. Como $e \notin T$, por (\ref{teo:tree-equiv}.\ref{teo:tree-equiv-circ}), $T + e$ tiene exactamente un circuito simple $C$, el cual contiene a e. Sea $f \in C, f \in X_T$. Como $f$ pertenece al único circuito de $T + e$, por (\ref{teo:tree-t-e-f}) el árbol $T' = T + e - f$ es árbol generador de G, y $e \in T'$. Pero estabamos suponiendo que $e$ no pertenecía a ningún AG de G. Abs! Entonces pertenece a todos.
-
-    \quad
-
-    $\Leftarrow$)
-    Como $e$ pertenece a todo AG de G, y por
-    (\ref{teo:tree-equiv}.\ref{teo:tree-equiv-puentes}) todas las aristas de un
-    arbol son puente, en particular $e$ es puente de G.
+        \item[$\Leftarrow$)] Como $e$ pertenece a todo AG de G, y por
+        (\ref{teo:tree-equiv}.\ref{teo:tree-equiv-puentes}) todas las aristas de un arbol son puente, en particular $e$ es puente de G.
+    \end{enumerate}
 
 \end{proof}
 
-
-
-
-
 \section*{Ejercicio 5}
+
+\textit{Cabinas de peaje inverso, en las que se le paga un monto al conductor que pase. Cada cabina de peaje $i \in \{1 \dotso C \}$ tiene un costo asociado $c_i$, el cual es negativo para las cabinas inversas, y el costo $c_{ij}$ del viaje de la cabina $i$ a la $j$, en caso de que se pueda de forma directa.}
+
+\begin{enumerate}[a.]
+\item Para modelar el problema, me gustaría representar a las cabinas como nodos, donde una cabina es adyacente a otra si se puede viajar de forma directa. Pero tenemos un problema, las aristas y los vértices tendrían peso, cuando los grafos que modelamos solo tienen peso en las aristas. Vamos a tener que usar una representación muy similar a la de la clase de Mirko. % \footnote{\url{https://campus.exactas.uba.ar/pluginfile.php/232068/mod_resource/content/1/CAMINOS%20MINIMOS.pdf}}.
+Veamos un ejemplo
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \begin{tikzpicture}[scale = 1,every node/.style={draw,circle,fill=white}]
+            % La sintaxis es \node[opciones] (nombre del nodo) {dentro};    
+            \node[label={1}](1) at (0,0) {$c_1$};
+            \node[label={2},right= 40mm of 1] (2) {$c_2$};
+        
+            \draw[line width=0.5mm,-latex] (1) to node[midway,below,draw=none,fill=none]{$c_{12}$} (2); 
+            \draw[line width=0.5mm,-latex] (2) to [bend right=60] node[midway,above,draw=none,fill=none]{$c_{21}$} (1);
+        \end{tikzpicture}
+        \caption{Digrafo original}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \begin{tikzpicture}[scale = 1,every node/.style={draw,circle,fill=white}]
+            % La sintaxis es \node[opciones] (nombre del nodo) {dentro};    
+            \node[label={$1_a$}](1a) at (0,0) {};
+            \node[label={$1_b$}, right=10mm of 1a](1b) {};
+
+            \node[label={$2_a$},right= 20mm of 1b] (2a) {};
+            \node[label={$2_b$},right= 10mm of 2a] (2b) {};
+
+            \draw[line width=0.5mm,-latex] (1a) to node[midway,below,draw=none,fill=none]{$c_{1}$} (1b);
+            \draw[line width=0.5mm,-latex] (2a) to node[midway,below,draw=none,fill=none]{$c_{2}$} (2b);
+
+            \draw[line width=0.5mm,-latex] (1b) to node[midway,below,draw=none,fill=none]{$c_{12}$} (2a); 
+            \draw[line width=0.5mm,-latex] (2b) to [bend right=60] node[midway,above,draw=none,fill=none]{$c_{21}$} (1a);
+        \end{tikzpicture}
+        \caption{Digrafo adaptado}
+    \end{subfigure}
+    \caption{Ejemplo de representación de cabinas con digrafos}
+    \label{5:adaptado}
+\end{figure}
+
+Separo cada nodo $i$ con peso $c_i$ en dos, $i_a$ e $i_b$, con un arco de peso $c_i$ de $i_a$ a $i_b$. Todos los arcos salen de $i_b$, y llegan a $i_a$. De esta forma, me aseguro que cualquier camino que pase por el nodo pague el costo del peaje. Luego, habrá un arco de $i_b$ a $j_a$ con peso $c_{ij}$ si es posible viajar de forma directa de la cabina $i$ a la $j$.
+
+Matemáticamente, $G = (V, X)$ donde
+\begin{align*}
+    V = \ &\{ 1_a, 1_b, \ldots C_a, C_b\},\\
+    X = \ &\{ (i_b, j_a, c_{ij}) \ |\ \text{se puede viajar de forma directa de i a j} \}\ \cup\\
+      &\{ (i_a, i_b, c_i) \ | \ i \in \{1, \ldots, C\}\}.
+\end{align*}
+
+Con este modelo, se podrá obtener una ganancia recorriendo \textit{eternamente} las cabinas si el grafo tiene \textbf{ciclos negativos}, circuitos que luego de recorrerlos dan una ganancia.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \begin{tikzpicture}[scale = 1,every node/.style={draw,circle,fill=white}]
+            % La sintaxis es \node[opciones] (nombre del nodo) {dentro};    
+            \node[label={$1_a$}](1a) at (0,0) {};
+            \node[label={$1_b$}, right=10mm of 1a](1b) {};
+
+            \node[label={$2_a$},right= 20mm of 1b] (2a) {};
+            \node[label={$2_b$},right= 10mm of 2a] (2b) {};
+
+            \draw[line width=0.5mm,-latex] (1a) to node[midway,below,draw=none,fill=none]{-10} (1b);
+            \draw[line width=0.5mm,-latex] (2a) to node[midway,below,draw=none,fill=none]{-5} (2b);
+
+            \draw[line width=0.5mm,-latex] (1b) to node[midway,below,draw=none,fill=none]{5} (2a); 
+            \draw[line width=0.5mm,-latex] (2b) to [bend right=60] node[midway,above,draw=none,fill=none]{10} (1a);
+        \end{tikzpicture}
+        \caption{Cabinas sin ciclos negativos}
+        \label{5/ej/sin}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \begin{tikzpicture}[scale = 1,every node/.style={draw,circle,fill=white}]
+            % La sintaxis es \node[opciones] (nombre del nodo) {dentro};    
+            \node[label={$1_a$}](1a) at (0,0) {};
+            \node[label={$1_b$}, right=10mm of 1a](1b) {};
+
+            \node[label={$2_a$},right= 20mm of 1b] (2a) {};
+            \node[label={$2_b$},right= 10mm of 2a] (2b) {};
+
+            \draw[line width=0.5mm,-latex] (1a) to node[midway,below,draw=none,fill=none]{-10} (1b);
+            \draw[line width=0.5mm,-latex] (2a) to node[midway,below,draw=none,fill=none]{-5} (2b);
+
+            \draw[line width=0.5mm,-latex] (1b) to node[midway,below,draw=none,fill=none]{5} (2a); 
+            \draw[line width=0.5mm,-latex] (2b) to [bend right=60] node[midway,above,draw=none,fill=none]{\textbf{5}} (1a);
+        \end{tikzpicture}
+        \caption{Cabinas con ciclos negativos}
+        \label{5/ej/con}
+    \end{subfigure}
+    \caption{Ejemplo de cabinas con y sin ciclos negativos}
+    \label{5/ej}
+\end{figure}
+
+En la figura \ref{5/ej} se pueden ver dos ejemplos de cabinas y montos. En \ref{5/ej/sin} no hay ningún ciclo negativo, a pesar de que el camino $P: 1_a\ 1_b \ 2_a \ 2_b$ tiene costo -10, al volver a $1_a$ se vuelve 0, con lo cual recorrer infinitamente nunca daría ganancias. En cambio, en \ref{5/ej/con} se puede ver como con un pequeño ajuste, el ciclo $C: 1_a\ 1_b \ 2_a \ 2_b \ 1_a$ tiene costo -5, con lo cual se puede recorrer eternamente, generando ganancias.
+
+\item Para resolver el problema del inciso anterior, basta con ver si hay ciclos negativos en algún camino de una cabina a la otra. Para ello, se puede usar el algoritmo de \textbf{Floyd}, pensado para resolver camino mínimo \textit{múltiples orígenes, múltiples destinos}, que puede ser adaptado para detectar ciclos negativos. Este tiene una complejidad temporal de $O(n^3)$ con $n$ la cantidad de vertices. Y en nuestro caso, $n = 2 \times|C|$, el doble de la cantidad de cabinas, ya que cada una se separa en dos nodos.
+
+\end{enumerate}
+
 
 \end{document}
