@@ -31,11 +31,16 @@
 \usepackage{fullpage}
 \usepackage{fancyhdr}
 
+% Imagenes
+% https://www.overleaf.com/learn/latex/Inserting_Images
+\usepackage{graphicx}
+
 % Teoremas, corolarios, etc.
 % https://www.overleaf.com/learn/latex/theorems_and_proofs
 \theoremstyle{definition} % Para que no salga en italicas
 \newtheorem{theorem}{Teorema}
 \newtheorem{lemma}{Lema}
+\newtheorem{proposition}{Prop.}
 
 \pagestyle{fancyplain}
 \fancyhf{}
@@ -47,7 +52,7 @@
 \lhead{L.U. 72/18}
 
 % Distancia del header (\chead) al texto
-\setlength{\headsep}{5pt}
+\setlength{\headsep}{30pt}
 
 \title{1er Parcial AED3: Parte Domiciliaria}
 \author{Manuel Panichelli, 72/18}
@@ -61,6 +66,13 @@
 \chapter*{Preámbulo}
 
 Teoremas / Ejercicios utilizados.
+
+\section{Grafos}
+
+\begin{proposition}\label{grafos/k_n}
+    El grafo completo con $n$ vértices, $K_n$, tiene cantidad de aristas
+    \[ m_{K_n} = \frac{n(n-1)}{2}. \]
+\end{proposition}
 
 \section{Arboles}
 
@@ -80,7 +92,7 @@ Teoremas / Ejercicios utilizados.
 \begin{lemma}\label{lema:tree-g-e}
     Sea $G = (V, X)$ conexo y $e \in X$.
 
-    \[ G - e \ \text{es conexo} \iff \text{e pertenece a un circuito simple de G} \]
+    \[ G - e \ \text{es conexo} \iff \text{e pertenece a un circuito simple de G.} \]
 \end{lemma}
 
 \begin{theorem}\label{teo:tree-t-e-f}
@@ -186,6 +198,82 @@ Teoremas / Ejercicios utilizados.
 
 \section*{Ejercicio 3}
 
+\begin{enumerate}[a)]
+    \item La imagen muestra un ejemplo de por qué las \textit{social bubbles} no funcionan. Uno cree que está en una burbuja pequeña, con solo la gente con la que se ve, pero en realidad la burbuja se extiende con la burbuja de cada individuo. De esa forma, termina siendo mucho más grande de lo esperado.
+    
+    Visto como grafos, cada persona sería un vértice, y dos personas son adyacentes entre sí si tuvieron contactos estrechos. Las burbujas sociales pasarían a ser componentes conexas, y uno cree que está en una componente conexa chica pero en realidad se extiende por la adyacencia de cada nodo, y termina siendo un grafo conexo. Cada contagio que se produzca en cualquier lado termina llegando a su burbuja.
+
+    \item \textit{Probar que un grafo de $n$ vértices que tiene más de $((n-1)(n-2))/2$ aristas es conexo.}
+    
+    qvq si $m > \frac{(n-1)(n-2)}{2}$ entonces G cualquiera es conexo. Lo voy a probar haciendo uso del siguiente lema.
+
+    \begin{lemma}\label{3/lemma}
+        Sea G un grafo cualquiera,
+        \[
+            m = \frac{(n-1)(n-2)}{2} 
+            \implies 
+            G \text{ es conexo o es } K_1 + K_{n-1} \\
+        \]
+    \end{lemma}
+
+    \begin{proof}[Dem (Lema \ref{3/lemma})]
+        Veamos con más detalle cómo se puede interpretar la fórmula
+        % https://tex.stackexchange.com/questions/36153/annotating-individual-math-terms-with-braces/36154
+        \[
+            m = \frac
+            {
+                \overbrace{(n-1)}^{\mathclap{\substack{\text{Todos los nodos}\\\text{menos 1}}}}
+                \quad
+                \times
+                \quad
+                \overbrace{(n-2)}^{\mathclap{\substack{\text{Conectan con todo}\\\text{el resto menos 1}}}}
+            }
+            {
+                \underbrace{2}_{\mathclap{\text{Porque son pares no ordenados}}}
+            }.
+        \]
+
+        Por lo tanto, puedo construir iterativamente a cualquier grafo que tenga esta cantidad de ejes conectandolo a $(n - 1)$ nodos con todos menos 1. Por ejemplo,
+
+        \begin{figure}[H]
+            \centering
+            \begin{subfigure}{0.4\textwidth}
+                \centering
+                \includegraphics[scale=0.15]{img/3-k1-kn-1.png}
+                \caption{Ejemplo de construcción que lleva a $K_1 + K_{n-1}$}
+            \end{subfigure}
+            \qquad
+            \begin{subfigure}{0.4\textwidth}
+                \centering
+                \includegraphics[scale=0.15]{img/3-conexo.png}
+                \caption{Ejemplo de construcción que lleva a un grafo conexo}
+            \end{subfigure}
+            \caption{Algunos grafos posibles para $n = 5, m = 6$}
+        \end{figure}
+
+        Y para grafos generales, para cada nodo $v_i \in V \setminus \{w\}$ con $w \in V$ cualquiera,
+
+        \begin{itemize}
+            \item Para el primero, lo conecto con todos los nodos excepto uno, $w$. De esta manera quedan definidas dos componentes conexas, $w$ y el resto de los nodos.
+            \item Para el segundo, tengo dos opciones. Puedo conectarlo con $w$ y todos menos 1 de $V \setminus \{w\}$, con lo cuál quedaría conexo, ya que ellos ya estaban conectados a través de $v_1$, o puedo conectarlo con todos los nodos de $V \setminus \{w\}$ y así seguir dejando a $w$ aislado.
+            \item Sigo así hasta el último de $V \setminus \{w\}$, si lo conecto con $w$ quedaría G conexo, y sino queda partido en dos: $w$ por un lado, y $K_{n-1}$ por el otro, ya que cada nodo estaba conectado con todos menos $w$, formando así un subgrafo completo.
+        \end{itemize}
+    \end{proof}
+
+    Ahora si, demuestro el ejercicio pedido
+    \begin{proof}[Dem (3b)]
+        Ya que $m > \frac{(n-1)(n-2)}{2}$, se agrega al menos una arista a $G'$, el subgrafo de $G$ que tiene exactamente $m = \frac{(n-1)(n-2)}{2}$. Por \eqref{3/lemma}, $G'$ es conexa o tiene dos componentes conexas, $K_1$ y $K_{n-2}$.
+        
+        \begin{itemize}
+            \item Si $G'$ es conexa, agregar solo aristas a un grafo conexo seguirá siendo conexo.
+            \item Sino, $G' = K_1 + K_{n-2}$, las aristas que se agregan no pueden ir dentro de cada componente conexa, ya que son grafos completos. Necesariamente tienen que tener un extremo en cada una. Al unirse las componentes conexas, $G$ queda conexo.
+        \end{itemize}
+
+        Para ambos casos $G$ es conexo.
+    \end{proof}
+    
+\end{enumerate}
+
 \section*{Ejercicio 4}
 
 \textit{Un \textbf{puente} de un grafo es un eje del grafo tal que al removerlo
@@ -193,7 +281,7 @@ se obtiene un grafo con más c.cs. Sea $G = (V, X)$ un grafo conexo y $e \in X$.
 Demostrar que e es un puente de G sii e pertenece a todo AG de G.}
 
 \begin{proof}[Dem]
-    Demostremos la ida y la vuelta.
+    Veamos la ida y la vuelta.
 
     \begin{enumerate}
         \item[$\Rightarrow$)] Sea $e$ puente de G. qvq pertenece a todo AG de G.\\
