@@ -1,4 +1,16 @@
-Duda ej 5
+# Ej 1
+
+Aclaraciones del discord
+
+- Suli: los ciclos son circuitos simples, sino la existencia de un circuito implicaria la existencia de infinitos circuitos (replicando el recorrido)
+
+- Sebi
+  - "ciclo" es "circuito simple"
+  - Un loop es un ciclo y dos aristas v -> w y w -> v permiten formar el ciclo v -> w -> v.
+
+- En el ejercicio 1)c), donde pide "encontrar un ciclo de longitud máxima...", hay que encontrar un ciclo de longitud máxima, no la longitud de un ciclo de longitud máxima
+
+# Ej 5
 
 tropi: Tengo una duda con el enunciado del ejercicio 5. Este dice que pasar por cada peaje tiene un costo ci, y luego menciona el costo cij, para viajar del peaje i al j. Mi duda es: Si cuando yo estoy en cierto peaje i y quiero viajar a otro peaje j, ¿tengo que considerar el costo de viajar del i al j, es decir cij, más el costo de pasar por el peaje al que llegue cj? También me preguntaba si, en este caso, yo tengo que si o si haber pagado el costo ci, es decir haber pasado por el peaje donde me encuentro para poder utilizar los caminos que salen de este a otros.
 

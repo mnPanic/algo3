@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc} 
 %\usepackage[spanish]{babel} 
 
+%% Texto
 % Para hipervinculos en las referencias
 \usepackage{hyperref}
 
@@ -12,14 +13,20 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
 
+% Estilos para dibujar grafos
+\tikzset{arco/.style={line width=0.5mm, -latex}}
+\tikzset{arista/.style={line width=0.5mm}}
+\tikzset{llabel/.style={midway,below,draw=none,fill=none}}
+\tikzset{ulabel/.style={midway,above,draw=none,fill=none}}
+
 % Figuras y subfiguras
 \usepackage{caption}
 \usepackage{subcaption} % subfiguras
 \usepackage{float}      % [H] en figuras
 
-% Simbolos matematicos
+%% Simbolos matematicos
 \usepackage{amsmath,amsfonts,amssymb,amsthm,epsfig,epstopdf,titling,url,array}
-
+\usepackage{bm} % \bm, https://www.ctan.org/pkg/bm
 % \overbrace y \underbrace
 \usepackage{mathtools}
 
@@ -74,6 +81,10 @@ Teoremas / Ejercicios utilizados.
     \[ m_{K_n} = \frac{n(n-1)}{2}. \]
 \end{proposition}
 
+\begin{lemma}\label{grafos/union-caminos}
+    La unión de dos caminos simples distintos entre dos vértices contiene un circuito simple.
+\end{lemma}
+
 \section{Arboles}
 
 \begin{theorem}[Definiciones equivalentes de árbol]\label{teo:tree-equiv}
@@ -86,6 +97,9 @@ Teoremas / Ejercicios utilizados.
         $e$.\label{teo:tree-equiv-circ}
         \item G es conexo, pero si se saca cualquier arista queda un grafo no
         conexo. Es decir, toda arista es puente.\label{teo:tree-equiv-puentes}
+
+        \item G es un grafo sin circuitos simples y $m=n-1$.
+        \item G es conexo y $m=n-1$.\label{teo:tree/equiv/conexo-n-1}
     \end{enumerate}
 \end{theorem}
 
@@ -99,9 +113,150 @@ Teoremas / Ejercicios utilizados.
     Sean $T = (V, X_T)$ un AG de $G = (V, X)$, $e \in X \setminus X_T$. Luego $T + e - f$ con $f$ una arista del único circuito de $G+e$ es AG de $G$.
 \end{theorem}
 
+\begin{theorem}\label{teo:tree/AG}
+    Todo arbol conexo tiene al menos un AG.
+\end{theorem}
+
 \chapter*{Resolución}
 
 \section*{Ejercicio 1}
+\textit{Un digrafo con loops tiene \textbf{forma de $\bm{\rho}$} cuando todos sus vértices tienen grado de salida igual a 1.}
+
+Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vértices es 1, hay exactamente $n$ arcos ($m = n$)
+
+\begin{enumerate}[a)]
+\item \textit{Dibujar 4 digrafos conexos y no isomorfos entre sí que tengan 6 vértices y forma de $\rho$}
+    
+    Para ello, voy a aprovechar que tienen $m = n$ arcos, y como $n - 1$ es lo mínimo para que sea conexo, basta con ir cambiando el arco redundante para formar diferentes grafos.
+
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[
+            scale = 1,
+            every node/.style={draw,circle,fill=black}
+        ]
+            \node[] (1) at (0,0) {};
+            \node[right=20mm of 1] (2) {};
+            \node[right=20mm of 2] (3) {};
+            \node[below=20mm of 1] (4) {};
+            \node[right=20mm of 4] (5) {};
+            \node[right=20mm of 5] (6) {};
+        
+            \draw[arco] (1) to (2);
+            \draw[arco] (2) to (3);
+            \draw[arco] (3) to (6);
+            \draw[arco] (6) to (5);
+            \draw[arco] (5) to (4);
+            \draw[arco, dotted] (4) to [loop left] (1);
+            \draw[arco, dotted] (4) to [bend right=60] (5);
+            \draw[arco, dotted] (4) to (3);
+            \draw[arco, dotted] (4) to (1);
+        \end{tikzpicture}
+        \caption*{Ejemplos de digrafos conexos con forma de $\rho$. Cada arco punteado representa un grafo diferente.}
+    \end{figure}
+
+\item \textit{Demostrar que si un digrafo es conexo (cuando su grafo subyacente lo es) y tiene forma de $\rho$ entonces tiene un único ciclo.}
+
+    \begin{proof}
+    Sea $G$ un digrafo conexo con forma de $\rho$. Su grafo subyacente también será conexo, y por Teo. \ref{teo:tree/AG} tendrá un AG $\bm{T}$, que por Teo. \ref{teo:tree-equiv}.\ref{teo:tree/equiv/conexo-n-1} tiene $m = n-1$.
+
+    Como $G$ tiene $m = n$ arcos, sean
+    \begin{itemize}
+        \item $\bm{G'}$ el sub-digrafo que resulta de convertir devuelta los ejes de T a los arcos de $G$.
+        \item $\bm{e = (v, w)}$ el que está demás ($e \notin T, G'$)
+    \end{itemize}
+
+    Ya que $T$ es un árbol, no puede tener ciclos, y $G'$ tendrá solo si se juntaron dos arcos de ida y vuelta en uno. Pero en ese caso, $G$ tendría un ciclo, así que voy a suponer que no sucede y que $G'$ no tiene ciclos.
+
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}{0.4\textwidth}
+            \centering
+            \begin{tikzpicture}[
+                scale = 1,
+                every node/.style={draw,circle,fill=white}
+            ]
+                \node[](1) at (0,0) {$v$};
+                \node[right= 40mm of 1] (2) {$w$};
+            
+                \draw[arco] (1) to [bend right=60] node[llabel]{$e$} (2); 
+                \draw[arco] (2) to [bend right=60] (1);
+            \end{tikzpicture}
+            \caption*{$G$}
+        \end{subfigure}
+        \begin{subfigure}{0.4\textwidth}
+            \centering
+            \begin{tikzpicture}[
+                scale = 1,
+                every node/.style={draw,circle,fill=white}
+            ]
+                \node[](1) at (0,0) {$v$};
+                \node[right= 40mm of 1] (2) {$w$};
+            
+                \draw[arista] (1) to [] node[llabel]{} (2); 
+            \end{tikzpicture}
+            \caption*{$T$ (en este caso igual a $G^s$)}
+        \end{subfigure}
+        \caption*{Ejemplo de aristas que se combinan}
+    \end{figure}
+
+    Como $G'$ no tiene ciclos, si $G$ los tiene, tienen que contener a $e$. Hay dos casos,
+
+    \begin{itemize}
+        \item Si $e$ resulta ser un \textit{loop}, $e = (v, v)$, entonces ese es el ciclo.
+        \item Si no, como $e = (v, w)$, $e$ sale de $v$ hacia $w$, y como el grafo es conexo tiene que haber arcos que unan $w$ con $v$, para que en el subyacente haya camino y sea conexo. Además, el camino tiene que estar orientado de $w$ a $v$, ya que si no lo estuviera, los nodos que lo conforman no tendrían grado de salida 1.
+
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}[
+                scale = 1,
+                every node/.style={draw,circle,fill=white}
+            ]
+                \node[](w) at (0,0) {$w$};
+                \node[right= 20mm of w] (u) {$u$};
+                \node[right= 20mm of u] (v) {$v$};
+            
+                \draw[arco] (u) to [] node[llabel]{} (w);
+                \draw[arco] (u) to [] node[llabel]{} (v);
+            \end{tikzpicture}
+            \caption*{Ejemplo de digrafo conexo pero que no tiene\\ camino orientado de $w$ a $v$, $d_{OUT}(u) = 2$}
+        \end{figure}
+
+        Por lo tanto, se que hay un camino orientado $P$ que va de $w$ a $v$. Y con él puedo armar el ciclo $C: (v, w) + P_{wv}$.
+
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}[
+                scale = 1,
+                every node/.style={draw,circle,fill=white}
+            ]
+                \node[](v) at (0,0) {$v$};
+                \node[right= 40mm of 1] (u) {$u$};
+                \node[above= 20mm of 2] (w) {$w$};
+
+                \draw[arco] (u) to [] node[llabel]{} (v);
+                \draw[arco] (w) to [] node[llabel]{} (u);
+                \draw[arco] (v) to [] node[ulabel]{$e$} (w);
+            \end{tikzpicture}
+            \caption*{Ejemplo de ciclo en un digrafo con forma de $\rho$}
+        \end{figure}
+    \end{itemize}
+
+    Ya se que tiene al menos un ciclo, y este contiene a $e$. Quiero ver que es único. Supongo que no lo es, y que existen dos:
+    \begin{align*}
+        C_1 &: e + P^1_{vw}\\
+        C_2 &: e + P^2_{vw}
+    \end{align*}
+
+    Por lo tanto, tengo dos caminos distintos de $v$ a $w$, los cuales, al no contener a $e$, están también en $T$. Entonces su unión también: $P^1_{vw} \cup P^2_{vw} \in T$. Y por Lema. \ref{grafos/union-caminos}, esa unión contiene un circuito simple, que también está en $T$. Pero como T es un árbol, no tiene ciclos. Abs! Entonces el camino es único.
+
+    Concluyo que $G$ tiene un único ciclo.
+    \end{proof}
+
+\item \textit{Diseñar un algoritmo para encontrar un ciclo de longitud máxima en un digrafo con forma de $\rho$ (no necesariamente conexo)}
+
+    Noto que no necesariamente 
+\end{enumerate}
 
 \section*{Ejercicio 2}
 
