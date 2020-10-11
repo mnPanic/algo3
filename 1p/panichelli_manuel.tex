@@ -1,5 +1,3 @@
-% !TeX root = ./panichelli_manuel.tex
-
 \documentclass[12pt, a4paper]{report}
 \usepackage[utf8]{inputenc} 
 %\usepackage[spanish]{babel} 
@@ -21,6 +19,15 @@
 
 % Simbolos matematicos
 \usepackage{amsmath,amsfonts,amssymb,amsthm,epsfig,epstopdf,titling,url,array}
+
+% \overbrace y \underbrace
+\usepackage{mathtools}
+
+% Algoritmos
+% https://shantoroy.com/latex/how-to-write-algorithm-in-latex/
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode} % noend para que no tenga endfor y eso
+
 \usepackage{fullpage}
 \usepackage{fancyhdr}
 
@@ -40,7 +47,7 @@
 \lhead{L.U. 72/18}
 
 % Distancia del header (\chead) al texto
-%\setlength{\headsep}{3pt}
+\setlength{\headsep}{5pt}
 
 \title{1er Parcial AED3: Parte Domiciliaria}
 \author{Manuel Panichelli, 72/18}
@@ -86,6 +93,97 @@ Teoremas / Ejercicios utilizados.
 
 \section*{Ejercicio 2}
 
+\textit{Hilera con n recipientes con $r_1, \ldots, r_n \in \mathbb{N}$ unidades de agua, se quiere traspasar a dos baldes con capacidades $B_1, B_2 \in \mathbb{N}$. En cada paso se toma el primer recipiente de la hilera y se vuelva completamente en uno de los baldes. Se repite mientras algun balde tenga capacidad suficiente para albergar \textbf{toda} el agua del recipiente. El objetivo es maximizar la cantidad de recipientes que se vuelcan.}
+
+\textcolor{red}{TODO: explicar el ejemplo dado, y explicar mejor el algoritmo y la func recursiva.}
+
+\begin{enumerate}[a)]
+    \item Formulo de forma recursiva una solución del problema con una función matemática $f(i, b)$ la cual tendrá la siguiente semántica: $f(i, b)$ es la máxima cantidad de recipientes que se pueden volcar suponiendo que ya se volcaron $r_1, ... r_{i-1}$ y que el balde con capacidad $B_1$ tiene $b$ de capacidad restante. Observo que esta información es suficiente para inferir la capacidad restante del balde $B_2$, dada por 
+    
+    \[ 
+        b_2 = B_2 -
+            \overbrace{
+            \underbrace{\sum_{j=1}^{i-1} r_j}_{\substack{\text{total}\\\text{volcado}}} - 
+            \underbrace{(B_1 - b)}_{\text{usado en} \ B_1}
+            }^{\text{usado en} \ B_2}
+    \]
+
+    Veamos la función recursiva:
+
+    \[ 
+        f(i, b) =
+            \begin{cases}
+                0 & \text{si} \ (r_i > b \ \text{y}\  r_i > b_2) \ \text{o} \ i = n \\
+                f(i+1,\ b) &\text{si}\ r_i > b\\
+                f(i+1,\ b - r_i) &\text{si}\ r_i > b_2\\
+                max\{f(i+1, b),\ f(i+1,\ b - r_i)\} &\text{si no}
+            \end{cases}
+    \]
+
+    \item Es fácil ver que tiene la propiedad de \textit{superposición de subproblemas}, por ejemplo cuando más de un recipiente tiene la misma cantidad de agua. Sean $r_1 = r_2 = 5, r_3 = 10$ y $B_1 = B_2 = 20$.
+    
+    % https://texample.net/tikz/examples/tree/
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[
+            every node/.style = {
+                shape=rectangle, rounded corners,
+                draw, align=center,
+                top color=white
+            }
+        ]
+        \tikzstyle{level 1}=[sibling distance=60mm] 
+        \tikzstyle{level 2}=[sibling distance=30mm] 
+        \tikzstyle{level 3}=[sibling distance=20mm] 
+
+            \node{f(1, 20)}
+                child { 
+                    node{f(2, 15)}
+                        child { node{f(3, 10)} }
+                        child { node[color=red]{f(3, 15)} }
+                }
+                child { 
+                    node{f(2, 20)}
+                        child { node[color=red]{f(3, 15)} }
+                        child { node{f(3, 20)} }
+                };
+        \end{tikzpicture}
+        \caption{Ejemplo de superposoción de subproblemas. En rojo las llamadas que se superponen.}
+    \end{figure}
+
+    \item A continuación un algoritmo de programación dinámica \textit{top-down} que implementa la función recursiva de forma bastante directa, agregando memoización mediante una matriz $M$ de $n \times B_1$. Suponiendo que $B_1, B_2$, los $r_i$ y $M$ son globales,
+    
+    % http://tug.ctan.org/macros/latex/contrib/algorithmicx/algorithmicx.pdf
+    \begin{algorithm}[H]
+        \caption{Implementación con programación dinámica.}
+        \begin{algorithmic}[1]
+            \Function{Baldes}{$i,\ b$}
+                \State $b_2\gets B_2 - \sum_{j=1}^{i-1} r_j - (B_1 - b)$ \Comment{$O(n)$}
+                \If{$i = n$ o ($r_i > b$ y $r_i > b_2$)}
+                    \State \textbf{return} 0
+                \EndIf
+
+                \If{$M[i][b] = -1$} \Comment{No está memoizado}
+                    \If{r}
+                        \State $M[i][b] \gets Baldes(i + 1, b)$
+                    \ElsIf{a}
+                        \State $M[i][b] \gets Baldes(i + 1, b - r_i)$
+                    \Else
+                        \State $M[i][b] \gets max\{Baldes(i+1, b),\ Baldes(i+1, b - r_i)\}$
+                    \EndIf
+                \EndIf
+
+                \State \textbf{return} $M[i][b]$
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+    
+    El problema se resuelve con el llamado $Baldes(0, B_1)$
+
+    \item La complejidad temporal del algoritmo \textit{top-down} es igual a cualquier otro algoritmo de PD, \#subproblemas $\times$ costo de cada subproblema. En este caso, $O((n \times B_1) \times n) = O(n^2 \times B_1)$. Noto que esto podria mejorarse a $O(n \times B_1)$ si no se calculara $b_2$ en cada llamado, sino se fuera incrementando y se pasara por parametro.
+        
+\end{enumerate}
+
 \section*{Ejercicio 3}
 
 \section*{Ejercicio 4}
@@ -111,7 +209,7 @@ Demostrar que e es un puente de G sii e pertenece a todo AG de G.}
 
 \textit{Cabinas de peaje inverso, en las que se le paga un monto al conductor que pase. Cada cabina de peaje $i \in \{1 \dotso C \}$ tiene un costo asociado $c_i$, el cual es negativo para las cabinas inversas, y el costo $c_{ij}$ del viaje de la cabina $i$ a la $j$, en caso de que se pueda de forma directa.}
 
-\begin{enumerate}[a.]
+\begin{enumerate}[a)]
 \item Para modelar el problema, me gustaría representar a las cabinas como nodos, donde una cabina es adyacente a otra si se puede viajar de forma directa. Pero tenemos un problema, las aristas y los vértices tendrían peso, cuando los grafos que modelamos solo tienen peso en las aristas. Vamos a tener que usar una representación muy similar a la de la clase de Mirko. % \footnote{\url{https://campus.exactas.uba.ar/pluginfile.php/232068/mod_resource/content/1/CAMINOS%20MINIMOS.pdf}}.
 Veamos un ejemplo
 
