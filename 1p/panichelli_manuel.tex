@@ -279,7 +279,8 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
 
     \algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
     \begin{algorithm}[H]
-        \caption{Algoritmo para encontrar el ciclo con longitud maxima en un digrafo con forma de $\rho$.}
+        \caption{Algoritmo para encontrar el ciclo con longitud maxima en un digrafo con forma de $\rho$. $O(n \times m)$}
+        \label{1/ciclo-max}
         \begin{algorithmic}[1]
             \Function{CicloMax}{$G$}
                 \State \textbf{In:} $G = (V, X)$, un digrafo con forma de $\rho$
@@ -324,6 +325,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         \label{1/subciclos}
     \end{figure}
 
+    La complejidad del algoritmo es $O(n \times m)$, ya que el do while interno se ejecuta a lo sumo $m$ veces en total, y el for $n$ veces. Pero como en los digrafos con forma de $\rho$ $n = m$, es $O(n^2)$.
 
 \end{enumerate}
 
@@ -422,11 +424,25 @@ Donde
 \end{itemize}
 
 \begin{enumerate}[a), resume]
-\item Intuitivamente, como es un arbol de elecciones de un algoritmo goloso, tiene sentido que tenga forma de $\rho$ ya que desde cada nodo se hará una sola elección que nunca se revise. Viendo la definición formal, efectivamente para cada vertice (actividad) elegimos una sola que sea la que termine primero. Por lo tanto para cada $i$,  $\exists!\ j : (i, j) \in X$. Entonces el grado de salida de todo vertice $i$ es 1, y el grafo $D$ tiene forma de $\rho$.
+\item Intuitivamente, como es un arbol de elecciones de un algoritmo goloso, tiene sentido que tenga forma de $\rho$ ya que desde cada nodo se hará una sola elección que nunca se revise. Viendo la definición formal, efectivamente para cada vertice (actividad) elegimos una sola: la que termine primero. Por lo tanto, para cada $i\ \exists!\ j : (i, j) \in X$. Entonces el grado de salida de todo vertice $i$ es 1, y el grafo $D$ tiene forma de $\rho$.
 
-\item opcional, no lo hago
+\item \textit{Demostrar que el ciclo máximo de D es una solución al problema de selección de actividades.}
 
-\item 
+opcional, no lo hago
+
+\item \textit{Dar un algoritmo para resolver el problema de selección de actividades, suponiendo que se describen usando un conjunto de pares $[s_i, t_i]$ con $0 \leq s_i, t_i \leq T, s_i \neq t_i$ y $T = 2n$}
+
+    Describo los pasos que tomaría el algoritmo en lenguaje coloquial. Este debe, dada una lista de actividades, devolver la máxima razón $x / y$ para una secuencia circular de actividades $A_1, \ldots A_x$ que se realiza en $y$ períodos completos.
+
+    \begin{enumerate}[1.]
+        \item Armo el digrafo D con las tareas como vértices, y para cada una aplico el algoritmo goloso para conseguir a cual hacerlo adyacente. La complejidad del algoritmo goloso es $O(n^2)$, pues para cada actividad se ven todas las demás para ver cual tiene el tiempo de finalización mas corto. Entonces la complejidad total de este paso es $O(n^3)$.
+        \item Como el ciclo máximo de $D$ es la secuencia circular, y $D$ es un digrafo con forma de $\rho$, puedo usar el algoritmo \ref{1/ciclo-max} para encontrarlo. Lo llamo $C$, y luego $x = length(C)$. Este paso se ejecuta en $O(n^2)$
+        \item Falta encontrar $y$, que es la cantidad de períodos que toma realizar las actividades del ciclo $C$. Para ello, recorro el ciclo, y si el inicio de la actividad $i$ es anterior a la finalización de la $i-1$, incremento la cantidad de períodos. Como se recorre el ciclo que tiene a lo sumo $m = n$ aristas, este paso se ejecuta en $O(n^2)$.
+        \item Devuelvo la máxima razón: $x / y$.
+    \end{enumerate}
+
+    Finalmente, la complejidad temporal del algoritmo será $O(n^3)$.
+
 \end{enumerate}
 
 \section*{Ejercicio 2}
