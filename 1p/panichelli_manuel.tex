@@ -78,9 +78,9 @@
 
 \chapter*{Preámbulo}
 
-Teoremas / Ejercicios utilizados.
+Teoremas, lemas y proposiciones citadas en los ejercicios. La numeración no necesariamente coincide con sus fuentes.
 
-\section{Grafos}
+\section*{Grafos}
 
 \begin{proposition}\label{grafos/k_n}
     El grafo completo con $n$ vértices, $K_n$, tiene cantidad de aristas
@@ -91,7 +91,7 @@ Teoremas / Ejercicios utilizados.
     La unión de dos caminos simples distintos entre dos vértices contiene un circuito simple.
 \end{lemma}
 
-\section{Arboles}
+\section*{Arboles}
 
 \begin{theorem}[Definiciones equivalentes de árbol]\label{teo:tree-equiv}
     Dado $G = (V, X)$ un grafo, las siguientes son equivalentes:
@@ -445,6 +445,7 @@ opcional, no lo hago
 
 \end{enumerate}
 
+\newpage
 \section*{Ejercicio 2}
 
 \textit{Hilera con n recipientes con $r_1, \ldots, r_n \in \mathbb{N}$ unidades de agua, se quiere traspasar a dos baldes con capacidades $B_1, B_2 \in \mathbb{N}$. En cada paso se toma el primer recipiente de la hilera y se vuelva completamente en uno de los baldes. Se repite mientras algun balde tenga capacidad suficiente para albergar \textbf{toda} el agua del recipiente. El objetivo es maximizar la cantidad de recipientes que se vuelcan.}
@@ -545,6 +546,7 @@ opcional, no lo hago
         
 \end{enumerate}
 
+\newpage
 \section*{Ejercicio 3}
 
 \begin{enumerate}[a)]
@@ -623,6 +625,7 @@ opcional, no lo hago
     
 \end{enumerate}
 
+\newpage
 \section*{Ejercicio 4}
 
 \textit{Un \textbf{puente} de un grafo es un eje del grafo tal que al removerlo
@@ -634,14 +637,39 @@ Demostrar que e es un puente de G sii e pertenece a todo AG de G.}
 
     \begin{enumerate}
         \item[$\Rightarrow$)] Sea $e$ puente de G. qvq pertenece a todo AG de G.\\
-        Va por el absurdo: supongo que no pertenece a ningún árbol generador de G, y sea $T = (V, X_T)$ uno cualquiera. Como $e \notin T$, por (\ref{teo:tree-equiv}.\ref{teo:tree-equiv-circ}), $T + e$ tiene exactamente un circuito simple $C$, el cual contiene a e. Sea $f \in C, f \in X_T$. Como $f$ pertenece al único circuito de $T + e$, por (\ref{teo:tree-t-e-f}) el árbol $T' = T + e - f$ es árbol generador de G, y $e \in T'$. Pero estabamos suponiendo que $e$ no pertenecía a ningún AG de G. Abs! Entonces pertenece a todos.
+        Va por el absurdo: supongo que no pertenece a ningún árbol generador de G, y sea $T = (V, X_T)$ uno cualquiera. Como $e \notin T$, por Teo. (\ref{teo:tree-equiv}.\ref{teo:tree-equiv-circ}), $T + e$ tiene exactamente un circuito simple $C$, el cual contiene a e. Sea $f \in C, f \in X_T$. Como $f$ pertenece al único circuito de $T + e$, por Teo. (\ref{teo:tree-t-e-f}) el árbol $T' = T + e - f$ es árbol generador de G, y $e \in T'$. Pero estabamos suponiendo que $e$ no pertenecía a ningún AG de G. Abs! Entonces pertenece a todos.
 
-        \item[$\Leftarrow$)] Como $e$ pertenece a todo AG de G, y por
-        (\ref{teo:tree-equiv}.\ref{teo:tree-equiv-puentes}) todas las aristas de un arbol son puente, en particular $e$ es puente de G.
+        \item[$\Leftarrow$)] qvq $e$ pertenece a todo AG de G $\implies$ $e$ es puente de G.
+         
+        Se que $e$ es puente $\iff G - e$ no es conexo. Supongo que no es puente y que $e = (v, w)$.
+        \begin{align*}
+            e\ \text{no es puente} &\implies G - e\ \text{es conexo}    & (\text{por def})\\
+            &\implies e \in C\ \text{un circuito simple de G,} & (\text{por Lema \ref{lema:tree-g-e}})
+        \end{align*}
+        y lo descompongo de la siguiente manera,
+
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}[
+                scale = 1,
+                every node/.style={draw,circle,fill=white}
+            ]
+                \node[](v) at (0,0) {$v$};
+                \node[right= 40mm of v] (w) {$w$};
+    
+                \draw[arista, color=orange] (v) to [] node[ulabel]{$e$} (w);
+                \draw[arista] (w) to [bend left = 60] node[llabel]{$P_{vw}$}(v);
+            \end{tikzpicture}
+            \caption*{$C: e + P_{vw}$}
+        \end{figure}
+
+        Como hay dos caminos para ir de $v$ a $w$, voy a tener al menos dos AG distintos, uno para cada camino. Sea $T$ el que contiene a $P_{vw}$. Como $e$ pertenece a todo AG, en particular $e \in T$. Pero como $P_{vw} \in T \wedge e \in T \implies C: e + P_{vw} \in T$. Abs! $T$ es un arbol, no puede tener circuitos. Como el absurdo provino de suponer que $e$ no era puente de G, concluyo que sí lo es, que es lo que quería probar.
+
     \end{enumerate}
 
 \end{proof}
 
+\newpage
 \section*{Ejercicio 5}
 
 \textit{Cabinas de peaje inverso, en las que se le paga un monto al conductor que pase. Cada cabina de peaje $i \in \{1 \dotso C \}$ tiene un costo asociado $c_i$, el cual es negativo para las cabinas inversas, y el costo $c_{ij}$ del viaje de la cabina $i$ a la $j$, en caso de que se pueda de forma directa.}
