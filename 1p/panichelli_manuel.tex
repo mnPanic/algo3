@@ -30,6 +30,8 @@
 % \overbrace y \underbrace
 \usepackage{mathtools}
 
+\DeclareMathOperator*{\argmin}{argmin}
+
 % Algoritmos
 % https://shantoroy.com/latex/how-to-write-algorithm-in-latex/
 \usepackage{algorithm}
@@ -255,7 +257,46 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
 
 \item \textit{Diseñar un algoritmo para encontrar un ciclo de longitud máxima en un digrafo con forma de $\rho$ (no necesariamente conexo)}
 
-    Noto que no necesariamente 
+    Para esto, hago un algoritmo iterativo que se fije partiendo de cada nodo si hay un ciclo, y se quede con el de longitud máxima. Supongo que cuento con las funciones
+
+    \begin{itemize}
+        \item $\bm{next(v)}$ que dado un vértice $v$, devuelve el único $w$ tal que $(v, w) \in X$, el cual tiene que existir ya que $G$ tiene forma de $\rho$.
+        \item Funciones sobre secuencias a lo haskell, cuyas equivalencias en python serian
+        \begin{align*}
+            \bm{last(s)} &= s[-1] \\
+            \bm{head(s)} &= s[0] \\
+            \bm{init(s)} &= s[1:] \\
+            \bm{length(s)} &= len(s) \\
+            \bm{s + w} &= \text{Concatenación}
+        \end{align*}
+    \end{itemize}
+
+    \algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
+    \begin{algorithm}[H]
+        \caption{Algoritmo para encontrar el ciclo con longitud maxima en un digrafo con forma de $\rho$.}
+        \begin{algorithmic}[1]
+            \Function{CicloMax}{$G$}
+                \State \textbf{In:} $G = (V, X)$, un digrafo con forma de $\rho$
+                \State \textbf{Out:} maxC un ciclo de longitud máxima.
+                \State maxC $\gets \langle \rangle$
+                \For{$v \in V$}
+                    \State C $\gets \langle \rangle$
+                    \Do
+                        \State C $\gets C + \langle next(last(C)) \rangle$ \Comment{Extiendo el camino}
+                    \doWhile{$last(C) \notin init(C)$} \Comment{Mientras no se repita}
+                    \If{$last(C) \neq first(C)$} \Comment{Tenemos un subciclo?}
+                        \State \textbf{continue} \Comment{Se vera en otra iteración}
+                    \EndIf
+
+                    \State maxC $\gets \argmin_{c \in \{C, maxC\}}(length(c))$
+                \EndFor
+
+                \State \textbf{return} $maxC$
+            \EndFunction
+        \end{algorithmic}
+    \end{algorithm}
+
+
 \end{enumerate}
 
 \section*{Ejercicio 2}
@@ -497,8 +538,8 @@ Separo cada nodo $i$ con peso $c_i$ en dos, $i_a$ e $i_b$, con un arco de peso $
 Matemáticamente, $G = (V, X)$ donde
 \begin{align*}
     V = \ &\{ 1_a, 1_b, \ldots C_a, C_b\},\\
-    X = \ &\{ (i_b, j_a, c_{ij}) \ |\ \text{se puede viajar de forma directa de i a j} \}\ \cup\\
-      &\{ (i_a, i_b, c_i) \ | \ i \in \{1, \ldots, C\}\}.
+    X = \ &\{ (i_b, j_a, c_{ij}) \mid \text{se puede viajar de forma directa de i a j} \}\ \cup\\
+      &\{ (i_a, i_b, c_i) \mid i \in \{1, \ldots, C\}\}.
 \end{align*}
 
 Con este modelo, se podrá obtener una ganancia recorriendo \textit{eternamente} las cabinas si el grafo tiene \textbf{ciclos negativos}, circuitos que luego de recorrerlos dan una ganancia.
