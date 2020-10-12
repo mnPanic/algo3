@@ -30,7 +30,7 @@
 % \overbrace y \underbrace
 \usepackage{mathtools}
 
-\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmin}
 
 % Algoritmos
 % https://shantoroy.com/latex/how-to-write-algorithm-in-latex/
@@ -159,8 +159,8 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
 
 \item \textit{Demostrar que si un digrafo es conexo (cuando su grafo subyacente lo es) y tiene forma de $\rho$ entonces tiene un único ciclo.}
 
-    \begin{proof}
-    Sea $G$ un digrafo conexo con forma de $\rho$. Su grafo subyacente también será conexo, y por Teo. \ref{teo:tree/AG} tendrá un AG $\bm{T}$, que por Teo. \ref{teo:tree-equiv}.\ref{teo:tree/equiv/conexo-n-1} tiene $m = n-1$.
+    \begin{proof}[Dem]
+    Sea $G$ un digrafo conexo con forma de $\rho$. Su grafo subyacente también será conexo, y por Teo. \ref{teo:tree/AG} tendrá un AG $\bm{T}$, que por Teo. \ref{teo:tree-equiv}.\ref{teo:tree/equiv/conexo-n-1} tiene $m_T = n-1$.
 
     Como $G$ tiene $m = n$ arcos, sean
     \begin{itemize}
@@ -202,7 +202,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         \caption*{Ejemplo de aristas que se combinan}
     \end{figure}
 
-    Como $G'$ no tiene ciclos, si $G$ los tiene, tienen que contener a $e$. Hay dos casos,
+    Como $G'$ no tiene ciclos y si $G$ los tiene, tienen que contener a $e$. Hay dos casos,
 
     \begin{itemize}
         \item Si $e$ resulta ser un \textit{loop}, $e = (v, v)$, entonces ese es el ciclo.
@@ -250,7 +250,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         C_2 &: e + P^2_{vw}
     \end{align*}
 
-    Por lo tanto, tengo dos caminos distintos de $v$ a $w$, los cuales, al no contener a $e$, están también en $T$. Entonces su unión también: $P^1_{vw} \cup P^2_{vw} \in T$. Y por Lema. \ref{grafos/union-caminos}, esa unión contiene un circuito simple, que también está en $T$. Pero como T es un árbol, no tiene ciclos. Abs! Entonces el camino es único.
+    Tengo dos caminos distintos de $v$ a $w$ que al no contener a $e$, están también en $T$. En consecuencia su unión también: $P^1_{vw} \cup P^2_{vw} \in T$. Y por Lema. \ref{grafos/union-caminos}, esa unión contiene un circuito simple, que también está en $T$. Pero como T es un árbol, no tiene ciclos. Abs! Entonces el camino es único.
 
     Concluyo que $G$ tiene un único ciclo.
     \end{proof}
@@ -288,7 +288,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
                         \State \textbf{continue} \Comment{Se vera en otra iteración}
                     \EndIf
 
-                    \State maxC $\gets \argmin_{c \in \{C, maxC\}}(length(c))$
+                    \State maxC $\gets \argmax_{c \in \{C, maxC\}}(length(c))$
                 \EndFor
 
                 \State \textbf{return} $maxC$
@@ -302,8 +302,6 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
 \section*{Ejercicio 2}
 
 \textit{Hilera con n recipientes con $r_1, \ldots, r_n \in \mathbb{N}$ unidades de agua, se quiere traspasar a dos baldes con capacidades $B_1, B_2 \in \mathbb{N}$. En cada paso se toma el primer recipiente de la hilera y se vuelva completamente en uno de los baldes. Se repite mientras algun balde tenga capacidad suficiente para albergar \textbf{toda} el agua del recipiente. El objetivo es maximizar la cantidad de recipientes que se vuelcan.}
-
-\textcolor{red}{TODO: explicar el ejemplo dado, y explicar mejor el algoritmo y la func recursiva.}
 
 \begin{enumerate}[a)]
     \item Formulo de forma recursiva una solución del problema con una función matemática $f(i, b)$ la cual tendrá la siguiente semántica: $f(i, b)$ es la máxima cantidad de recipientes que se pueden volcar suponiendo que ya se volcaron $r_1, ... r_{i-1}$ y que el balde con capacidad $B_1$ tiene $b$ de capacidad restante. Observo que esta información es suficiente para inferir la capacidad restante del balde $B_2$, dada por 
@@ -321,14 +319,23 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
     \[ 
         f(i, b) =
             \begin{cases}
-                0 & \text{si} \ (r_i > b \ \text{y}\  r_i > b_2) \ \text{o} \ i = n \\
+                0 & \text{si} \ (r_i > b \ \text{y}\  r_i > b_2) \ \text{o} \ i = n+1 \\
                 f(i+1,\ b) &\text{si}\ r_i > b\\
                 f(i+1,\ b - r_i) &\text{si}\ r_i > b_2\\
                 max\{f(i+1, b),\ f(i+1,\ b - r_i)\} &\text{si no}
             \end{cases}
     \]
 
-    \item Es fácil ver que tiene la propiedad de \textit{superposición de subproblemas}, por ejemplo cuando más de un recipiente tiene la misma cantidad de agua. Sean $r_1 = r_2 = 5, r_3 = 10$ y $B_1 = B_2 = 20$.
+    Explicada en palabras,
+
+    \begin{itemize}
+        \item Si $(r_i > b \ \text{y}\  r_i > b_2)$, ninguno de los dos baldes tiene capacidad suficiente para albergar el contenido del recipiente $i$-ésimo. Como no se pueden saltear, terminamos.
+        \item Si $i = n + 1$, ya consideramos todos los recipientes.
+        \item Si no entra en $B_1$ continuamos por $B_2$, y viceversa.
+        \item Si entra en ambos, tomamos ambos caminos y devolvemos el resultado máximo entre ámbas.
+    \end{itemize}
+
+    \item Es fácil ver que tiene la propiedad de \textit{superposición de subproblemas}, basta con que alguna cantidad de recipientes sumen lo mismo, y así volcarlos en cada balde sería indistinto y llevaría al mismo resultado. Por ejemplo cuando más de un recipiente tiene la misma cantidad de agua. Sean $r_1 = r_2 = 5, r_3 = 10$ y $B_1 = B_2 = 20$.
     
     % https://texample.net/tikz/examples/tree/
     \begin{figure}[H]
@@ -359,7 +366,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         \caption{Ejemplo de superposoción de subproblemas. En rojo las llamadas que se superponen.}
     \end{figure}
 
-    \item A continuación un algoritmo de programación dinámica \textit{top-down} que implementa la función recursiva de forma bastante directa, agregando memoización mediante una matriz $M$ de $n \times B_1$. Suponiendo que $B_1, B_2$, los $r_i$ y $M$ son globales,
+    \item A continuación un algoritmo de programación dinámica \textit{top-down} que implementa la función recursiva de forma bastante directa, agregando memoización mediante una matriz $M$ de $n \times B_1$, cuyo valor por defecto es -1. Suponiendo que $B_1, B_2$, los $r_i$ y $M$ son globales,
     
     % http://tug.ctan.org/macros/latex/contrib/algorithmicx/algorithmicx.pdf
     \begin{algorithm}[H]
@@ -367,14 +374,14 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         \begin{algorithmic}[1]
             \Function{Baldes}{$i,\ b$}
                 \State $b_2\gets B_2 - \sum_{j=1}^{i-1} r_j - (B_1 - b)$ \Comment{$O(n)$}
-                \If{$i = n$ o ($r_i > b$ y $r_i > b_2$)}
+                \If{$i = n+1$ o ($r_i > b$ y $r_i > b_2$)}
                     \State \textbf{return} 0
                 \EndIf
 
                 \If{$M[i][b] = -1$} \Comment{No está memoizado}
-                    \If{r}
+                    \If{$r_i > b$}
                         \State $M[i][b] \gets Baldes(i + 1, b)$
-                    \ElsIf{a}
+                    \ElsIf{$r_i > b_2$}
                         \State $M[i][b] \gets Baldes(i + 1, b - r_i)$
                     \Else
                         \State $M[i][b] \gets max\{Baldes(i+1, b),\ Baldes(i+1, b - r_i)\}$
@@ -386,9 +393,9 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         \end{algorithmic}
     \end{algorithm}
     
-    El problema se resuelve con el llamado $Baldes(0, B_1)$
+    El problema se resuelve con el llamado $Baldes(0,\ B_1)$
 
-    \item La complejidad temporal del algoritmo \textit{top-down} es igual a cualquier otro algoritmo de PD, \#subproblemas $\times$ costo de cada subproblema. En este caso, $O((n \times B_1) \times n) = O(n^2 \times B_1)$. Noto que esto podria mejorarse a $O(n \times B_1)$ si no se calculara $b_2$ en cada llamado, sino se fuera incrementando y se pasara por parametro.
+    \item La complejidad temporal del algoritmo \textit{top-down} es igual a cualquier otro algoritmo de PD, \#subproblemas $\times$ costo de cada subproblema. En este caso, la cantidad de subproblemas es $n \times B_1$, y cada uno se resuelve en $O(n)$ (cálculo de $b_2$ y el resto operaciones en tiempo constante). Por lo tanto la complejidad es $O((n \times B_1) \times n) = O(n^2 \times B_1)$. Noto que esto podria mejorarse a $O(n \times B_1)$ si no se calculara $b_2$ en cada llamado, sino se fuera incrementando y se pasara por parametro.
         
 \end{enumerate}
 
@@ -397,7 +404,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
 \begin{enumerate}[a)]
     \item La imagen muestra un ejemplo de por qué las \textit{social bubbles} no funcionan. Uno cree que está en una burbuja pequeña, con solo la gente con la que se ve, pero en realidad la burbuja se extiende con la burbuja de cada individuo. De esa forma, termina siendo mucho más grande de lo esperado.
     
-    Visto como grafos, cada persona sería un vértice, y dos personas son adyacentes entre sí si tuvieron contactos estrechos. Las burbujas sociales pasarían a ser componentes conexas, y uno cree que está en una componente conexa chica pero en realidad se extiende por la adyacencia de cada nodo, y termina siendo un grafo conexo. Cada contagio que se produzca en cualquier lado termina llegando a su burbuja.
+    Visto como grafos, cada persona sería un vértice, y dos personas son adyacentes entre sí si tuvieron contactos estrechos. Las burbujas sociales pasarían a ser componentes conexas, y uno cree que está en una componente conexa chica pero en realidad se extiende por los vecinos de cada nodo, y termina siendo un grafo conexo. Cada contagio que se produzca en cualquier lado termina llegando a su burbuja.
 
     \item \textit{Probar que un grafo de $n$ vértices que tiene más de $((n-1)(n-2))/2$ aristas es conexo.}
     
@@ -462,7 +469,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         
         \begin{itemize}
             \item Si $G'$ es conexa, agregar solo aristas a un grafo conexo seguirá siendo conexo.
-            \item Sino, $G' = K_1 + K_{n-2}$, las aristas que se agregan no pueden ir dentro de cada componente conexa, ya que son grafos completos. Necesariamente tienen que tener un extremo en cada una. Al unirse las componentes conexas, $G$ queda conexo.
+            \item Sino, $G' = K_1 + K_{n-2}$, y las aristas que se agregan no pueden ir dentro de cada componente conexa, ya que son grafos completos. Necesariamente tienen que tener un extremo en cada una. Al unirse las componentes conexas, $G$ queda conexo.
         \end{itemize}
 
         Para ambos casos $G$ es conexo.
