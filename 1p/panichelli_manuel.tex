@@ -9,6 +9,10 @@
 % Para enumerate con letras
 \usepackage[shortlabels]{enumitem}
 
+% [resume]
+% https://tex.stackexchange.com/questions/142185/enumeration-across-many-sections
+\usepackage{enumitem}
+
 % Para dibujar grafos
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta}
@@ -122,6 +126,8 @@ Teoremas / Ejercicios utilizados.
 \chapter*{Resolución}
 
 \section*{Ejercicio 1}
+
+\subsection*{Digrafos con forma de $\rho$}
 \textit{Un digrafo con loops tiene \textbf{forma de $\bm{\rho}$} cuando todos sus vértices tienen grado de salida igual a 1.}
 
 Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vértices es 1, hay exactamente $n$ arcos ($m = n$)
@@ -236,9 +242,9 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
                 \node[right= 40mm of 1] (u) {$u$};
                 \node[above= 20mm of 2] (w) {$w$};
 
-                \draw[arco] (u) to [] node[llabel]{} (v);
-                \draw[arco] (w) to [] node[llabel]{} (u);
-                \draw[arco] (v) to [] node[ulabel]{$e$} (w);
+                \draw[arco] (u) to (v);
+                \draw[arco] (w) to (u);
+                \draw[arco] (v) to node[ulabel]{$e$} (w);
             \end{tikzpicture}
             \caption*{Ejemplo de ciclo en un digrafo con forma de $\rho$}
         \end{figure}
@@ -296,7 +302,131 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         \end{algorithmic}
     \end{algorithm}
 
+    Para cada vértice, se vé si hay un ciclo partiendo de él extendiendo el camino por el único siguiente. En caso de haberlo, se compara su longitud con el máximo. Hay un chequeo extra para garantizar que no se cuenten erróneamente la longitud de posibles subciclos. En la figura \ref{1/subciclos} se ve como al comenzar desde $v$, de no tener ese chequeo, contabilizaríamos a $v\ x\ w\ u\ x$ como un ciclo de longitud errónea.
 
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[
+            scale = 1,
+            every node/.style={draw,circle,fill=white}
+        ]
+            \node[](v) at (0,0) {$v$};
+            \node[right= 20mm of v] (x) {$x$};
+            \node[right= 20mm of x] (u) {$u$};
+            \node[above= 20mm of u] (w) {$w$};
+
+            \draw[arco] (u) to [] (x);
+            \draw[arco] (x) to [] (w);
+            \draw[arco] (v) to [] (x);
+            \draw[arco] (w) to [] (u);
+        \end{tikzpicture}
+        \caption{Ejemplo de subciclo en un digrafo con forma de $\rho$}
+        \label{1/subciclos}
+    \end{figure}
+
+
+\end{enumerate}
+
+\subsection*{Selección de actividades}
+
+\textit{Período de tiempo circular $[0, T]$, $n$ actividades tal que la $i$-ésima comienza en el instante $s_i$ y termina en $t_i$. Si $s_i > t_i$, la actividad contiene el instante $0=T$. El objetivo es determinar la máxima razón $x / y$ para una secuencia circular de actividades $A_1, \ldots, A_x$ que se realiza en $y$ períodos completos cuando $A_{i+1}$ se inicia lo antes posible una vez terminado $A_i$. Estrategia \textbf{golosa} para elegir actividad $j$ si se eligió $i$: Tomarla como una actividad que no se solapa con $i$ y cuyo tiempo de finalización es el primero desde $t_i$, en un recorrido del tiempo en el sentido de las agujas del reloj. Definir el digrafo de actividades D que tiene un vert $i$ por cada actividad y tiene un arco $i \to j$ cuando $j$ es la elección golosa que se toma si se elige $i$.}
+
+Veamos los ejemplos del enunciado como digrafos y luego lo definimos formalmente
+\begin{align*}
+    A_0 &= [0, 6]   & A_4 &= [11, 15]\\
+    A_1 &= [4, 10]  & A_5 &= [13, 18]\\
+    A_2 &= [7, 12]  & A_6 &= [16, 23]\\
+    A_3 &= [8, 10]  & A_7 &= [19, 2]
+\end{align*}
+
+% \interval{layer}{s}{t}
+\newcommand{\interval}[4]{
+    \draw (#2, #1) -- (#3, #1) node[ulabel]{#4};
+    \draw[fill=white] (#2, #1) circle (0.25);
+    \fill (#3, #1) circle (0.25);
+}
+
+% para cuando s > t
+\newcommand{\loopinterval}[4]{
+    \draw (#2, #1) -- (23, #1) node[ulabel]{#4};
+    \draw (0, #1) -- (#3, #1) node[ulabel]{#4};
+    \draw[fill=white] (#2, #1) circle (0.25);
+    \fill (#3, #1) circle (0.25);
+}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.5]
+            % Axis
+            \draw (0,0)-- (23,0);
+            % Points
+            \foreach \x in {0, ..., 23} {
+                \draw (\x,0.5) -- (\x,-0.5) node[below] {\x};
+            }
+            
+            \interval{2.5}{0}{6}{$A_0$}
+            \interval{2.5}{8}{10}{$A_3$}
+            \interval{2.5}{11}{15}{$A_4$}
+            \interval{2.5}{16}{23}{$A_6$}
+            \interval{1}{4}{10}{$A_1$}
+            \loopinterval{1}{19}{2}{$A_7$}
+            \interval{4}{13}{18}{$A_5$}
+            \interval{4}{7}{12}{$A_2$}
+        \end{tikzpicture}
+    \end{subfigure}
+    \par\bigskip
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{tikzpicture}[
+            scale = 1,
+            every node/.style={draw,circle,fill=white}
+        ]
+            \node[](0) at (0, 0) {0};
+            \node[right=20mm of 1](3) {3};
+            \node[below=20mm of 3](4) {4};
+            \node[left=20mm of 4](6) {6};
+            
+            \node[right=10mm of 3](1) {1};
+            \node[right=20mm of 1](2) {2};
+            \node[right=10mm of 4](5) {5};
+            \node[right=20mm of 5](7) {7};
+    
+            \draw[arco, color=cyan] (0) to [bend left = 30] (3);
+            \draw[arco, color=cyan] (3) to (4);
+            \draw[arco, color=cyan] (4) to [bend left = 30](6);
+            \draw[arco, color=cyan] (6) to (0);
+
+            \draw[arco] (1) to (4);
+            \draw[arco] (5) to (7);
+            \draw[arco] (2) to (5);
+            \draw[arco, dotted] (7) to (1);
+            \draw[arco, dotted] (7) to (3);
+        \end{tikzpicture}    
+    \end{subfigure}
+    \caption{Ejemplo de un digrafo de actividades $D$, en \textcolor{cyan}{cyan} el ciclo máximo.}
+    \label{1/subciclos}
+\end{figure}
+
+Definimos $D = (V, X)$ como
+\begin{align*}
+    V &= \{ 1, \ldots, x \}\\
+    X &= \{ (i, j) \mid i \in V, \text{noSeSolapan}(i, j) \wedge \text{terminaAntes}(i, j, k)\ \forall k\}
+\end{align*}
+
+Donde
+\begin{itemize}
+    \item noSeSolapan(i, j) es verdadero sii las actividades $A_i$ y $A_j$ no se solapan.
+    \item terminaAntes(i, j, k) es verdadero si la actividad $A_j$ tiene un tiempo de finalización anterior a $A_k$ a partir del de $A_i$, en un recorrido del tiempo en el sentido de las agujas del reloj. En caso de empate, prefiere la de menor número.
+\end{itemize}
+
+\begin{enumerate}[a), resume]
+\item Intuitivamente, como es un arbol de elecciones de un algoritmo goloso, tiene sentido que tenga forma de $\rho$ ya que desde cada nodo se hará una sola elección que nunca se revise. Viendo la definición formal, efectivamente para cada vertice (actividad) elegimos una sola que sea la que termine primero. Por lo tanto para cada $i$,  $\exists!\ j : (i, j) \in X$. Entonces el grado de salida de todo vertice $i$ es 1, y el grafo $D$ tiene forma de $\rho$.
+
+\item opcional, no lo hago
+
+\item 
 \end{enumerate}
 
 \section*{Ejercicio 2}
