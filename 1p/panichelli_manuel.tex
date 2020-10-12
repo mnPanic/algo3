@@ -68,7 +68,7 @@
 \setlength{\headsep}{30pt}
 
 \title{1er Parcial AED3: Parte Domiciliaria}
-\author{Manuel Panichelli, 72/18}
+\author{Manuel Panichelli\\L.U. 72/18}
 \date{\today}
 
 \begin{document}
@@ -208,7 +208,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         \caption*{Ejemplo de aristas que se combinan}
     \end{figure}
 
-    Como $G'$ no tiene ciclos y si $G$ los tiene, tienen que contener a $e$. Hay dos casos,
+    Como $G'$ no tiene ciclos y si $G$ los tiene, todos los ciclos tienen que contener a $e$. Hay dos casos,
 
     \begin{itemize}
         \item Si $e$ resulta ser un \textit{loop}, $e = (v, v)$, entonces ese es el ciclo.
@@ -303,7 +303,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         \end{algorithmic}
     \end{algorithm}
 
-    Para cada vértice, se vé si hay un ciclo partiendo de él extendiendo el camino por el único siguiente. En caso de haberlo, se compara su longitud con el máximo. Hay un chequeo extra para garantizar que no se cuenten erróneamente la longitud de posibles subciclos. En la figura \ref{1/subciclos} se ve como al comenzar desde $v$, de no tener ese chequeo, contabilizaríamos a $v\ x\ w\ u\ x$ como un ciclo de longitud errónea.
+    Para cada vértice, se vé si hay un ciclo partiendo de él extendiendo el camino por el único siguiente. En caso de haberlo, se compara su longitud con el máximo. Hay un chequeo extra para garantizar que no se cuenten erróneamente la longitud de posibles subciclos, ejemplificado en la figura \ref{1/subciclos}. Se ve como al comenzar desde $v$, de no tener ese chequeo, contabilizaríamos a $v\ x\ w\ u\ x$ como un ciclo de longitud errónea.
 
     \begin{figure}[H]
         \centering
@@ -479,7 +479,7 @@ opcional, no lo hago
         \item Si $(r_i > b \ \text{y}\  r_i > b_2)$, ninguno de los dos baldes tiene capacidad suficiente para albergar el contenido del recipiente $i$-ésimo. Como no se pueden saltear, terminamos.
         \item Si $i = n + 1$, ya consideramos todos los recipientes.
         \item Si no entra en $B_1$ continuamos por $B_2$, y viceversa.
-        \item Si entra en ambos, tomamos ambos caminos y devolvemos el resultado máximo entre ámbas.
+        \item Si entra en ambos, tomamos ambos caminos y devolvemos el mejor.
     \end{itemize}
 
     \item Es fácil ver que tiene la propiedad de \textit{superposición de subproblemas}, basta con que alguna cantidad de recipientes sumen lo mismo, y así volcarlos en cada balde sería indistinto y llevaría al mismo resultado. Por ejemplo, cuando más de un recipiente tiene la misma cantidad de agua. Sean $r_1 = r_2 = 5, r_3 = 10$ y $B_1 = B_2 = 20$.
@@ -495,19 +495,34 @@ opcional, no lo hago
             }
         ]
         \tikzstyle{level 1}=[sibling distance=60mm] 
-        \tikzstyle{level 2}=[sibling distance=30mm] 
-        \tikzstyle{level 3}=[sibling distance=20mm] 
+        \tikzstyle{level 2}=[sibling distance=40mm] 
+        \tikzstyle{level 3}=[sibling distance=30mm]
+        \tikzstyle{level 3}=[sibling distance=20mm]
 
             \node{f(1, 20)}
                 child { 
                     node{f(2, 15)}
-                        child { node{f(3, 10)} }
-                        child { node[color=red]{f(3, 15)} }
+                        child {
+                            node{f(3, 10)}
+                                child{node{f(4, 0)}}
+                                child{node[color=red]{f(4, 10)}}
+                        }
+                        child {
+                            node[color=red]{f(3, 15)}
+                                child{node{f(4, 5)}}
+                                child{node{f(4, 15)}}
+                        }
                 }
                 child { 
                     node{f(2, 20)}
-                        child { node[color=red]{f(3, 15)} }
-                        child { node{f(3, 20)} }
+                        child {
+                            node[color=red]{f(3, 15)}
+                        }
+                        child {
+                            node{f(3, 20)}
+                                child{node[color=red]{f(4, 10)}}
+                                child{node{f(4, 20)}}
+                        }
                 };
         \end{tikzpicture}
         \caption{Ejemplo de superposoción de subproblemas. En rojo las llamadas que se superponen.}
@@ -675,7 +690,7 @@ Demostrar que e es un puente de G sii e pertenece a todo AG de G.}
 \textit{Cabinas de peaje inverso, en las que se le paga un monto al conductor que pase. Cada cabina de peaje $i \in \{1 \dotso C \}$ tiene un costo asociado $c_i$, el cual es negativo para las cabinas inversas, y el costo $c_{ij}$ del viaje de la cabina $i$ a la $j$, en caso de que se pueda de forma directa.}
 
 \begin{enumerate}[a)]
-\item Para modelar el problema, me gustaría representar a las cabinas como nodos, donde una cabina es adyacente a otra si se puede viajar de forma directa. Pero tenemos un problema, las aristas y los vértices tendrían peso, cuando los grafos que modelamos solo tienen peso en las aristas. Vamos a tener que usar una representación muy similar a la de la clase de Mirko. % \footnote{\url{https://campus.exactas.uba.ar/pluginfile.php/232068/mod_resource/content/1/CAMINOS%20MINIMOS.pdf}}.
+\item Para modelar el problema, me gustaría representar a las cabinas como nodos, donde una cabina es adyacente a otra si se puede viajar de forma directa. Pero tenemos un problema, las aristas y los vértices tendrían peso, cuando los grafos que modelamos solo tienen peso en las aristas. Vamos a tener que usar una representación muy similar a la de la clase de Mirko\footnote{\url{https://campus.exactas.uba.ar/pluginfile.php/232068/mod\_resource/content/1/CAMINOS\%20MINIMOS.pdf}}.
 Veamos un ejemplo
 
 \begin{figure}[H]
