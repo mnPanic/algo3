@@ -30,7 +30,7 @@
 % \overbrace y \underbrace
 \usepackage{mathtools}
 
-\DeclareMathOperator*{\argmax}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
 
 % Algoritmos
 % https://shantoroy.com/latex/how-to-write-algorithm-in-latex/
@@ -310,8 +310,8 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         b_2 = B_2 -
             \overbrace{
             \underbrace{\sum_{j=1}^{i-1} r_j}_{\substack{\text{total}\\\text{volcado}}} - 
-            \underbrace{(B_1 - b)}_{\text{usado en} \ B_1}
-            }^{\text{usado en} \ B_2}
+            \underbrace{(B_1 - b).}_{\text{volcado en} \ B_1}
+            }^{\text{volcado en} \ B_2}
     \]
 
     Veamos la función recursiva:
@@ -320,9 +320,9 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         f(i, b) =
             \begin{cases}
                 0 & \text{si} \ (r_i > b \ \text{y}\  r_i > b_2) \ \text{o} \ i = n+1 \\
-                f(i+1,\ b) &\text{si}\ r_i > b\\
-                f(i+1,\ b - r_i) &\text{si}\ r_i > b_2\\
-                max\{f(i+1, b),\ f(i+1,\ b - r_i)\} &\text{si no}
+                f(i+1,\ b) + 1 &\text{si}\ r_i > b\\
+                f(i+1,\ b - r_i) + 1 &\text{si}\ r_i > b_2\\
+                max\{f(i+1, b),\ f(i+1,\ b - r_i)\} + 1 &\text{si no}
             \end{cases}
     \]
 
@@ -335,7 +335,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
         \item Si entra en ambos, tomamos ambos caminos y devolvemos el resultado máximo entre ámbas.
     \end{itemize}
 
-    \item Es fácil ver que tiene la propiedad de \textit{superposición de subproblemas}, basta con que alguna cantidad de recipientes sumen lo mismo, y así volcarlos en cada balde sería indistinto y llevaría al mismo resultado. Por ejemplo cuando más de un recipiente tiene la misma cantidad de agua. Sean $r_1 = r_2 = 5, r_3 = 10$ y $B_1 = B_2 = 20$.
+    \item Es fácil ver que tiene la propiedad de \textit{superposición de subproblemas}, basta con que alguna cantidad de recipientes sumen lo mismo, y así volcarlos en cada balde sería indistinto y llevaría al mismo resultado. Por ejemplo, cuando más de un recipiente tiene la misma cantidad de agua. Sean $r_1 = r_2 = 5, r_3 = 10$ y $B_1 = B_2 = 20$.
     
     % https://texample.net/tikz/examples/tree/
     \begin{figure}[H]
@@ -380,11 +380,11 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
 
                 \If{$M[i][b] = -1$} \Comment{No está memoizado}
                     \If{$r_i > b$}
-                        \State $M[i][b] \gets Baldes(i + 1, b)$
+                        \State $M[i][b] \gets Baldes(i + 1, b) + 1$
                     \ElsIf{$r_i > b_2$}
-                        \State $M[i][b] \gets Baldes(i + 1, b - r_i)$
+                        \State $M[i][b] \gets Baldes(i + 1, b - r_i) + 1$
                     \Else
-                        \State $M[i][b] \gets max\{Baldes(i+1, b),\ Baldes(i+1, b - r_i)\}$
+                        \State $M[i][b] \gets max\{Baldes(i+1, b),\ Baldes(i+1, b - r_i)\} + 1$
                     \EndIf
                 \EndIf
 
@@ -395,7 +395,7 @@ Antes de comenzar, observo que como el grado de salida de \textbf{todos} los vé
     
     El problema se resuelve con el llamado $Baldes(0,\ B_1)$
 
-    \item La complejidad temporal del algoritmo \textit{top-down} es igual a cualquier otro algoritmo de PD, \#subproblemas $\times$ costo de cada subproblema. En este caso, la cantidad de subproblemas es $n \times B_1$, y cada uno se resuelve en $O(n)$ (cálculo de $b_2$ y el resto operaciones en tiempo constante). Por lo tanto la complejidad es $O((n \times B_1) \times n) = O(n^2 \times B_1)$. Noto que esto podria mejorarse a $O(n \times B_1)$ si no se calculara $b_2$ en cada llamado, sino se fuera incrementando y se pasara por parametro.
+    \item La complejidad temporal del algoritmo \textit{top-down} es igual a cualquier otro algoritmo de PD, (\#subproblemas $\times$ costo de cada subproblema). En este caso, la cantidad de subproblemas es $n \times B_1$, y cada uno se resuelve en $O(n)$ (cálculo de $b_2$ y el resto operaciones en tiempo constante). Por lo tanto la complejidad es $O((n \times B_1) \times n) = O(n^2 \times B_1)$. Noto que esto podria mejorarse a $O(n \times B_1)$ evitando calcular $b_2$ en cada llamado, incrementandolo de a 1 en cada llamado.
         
 \end{enumerate}
 
@@ -600,6 +600,4 @@ En la figura \ref{5/ej} se pueden ver dos ejemplos de cabinas y montos. En \ref{
 \item Para resolver el problema del inciso anterior, basta con ver si hay ciclos negativos en algún camino de una cabina a la otra. Para ello, se puede usar el algoritmo de \textbf{Floyd}, pensado para resolver camino mínimo \textit{múltiples orígenes, múltiples destinos}, que puede ser adaptado para detectar ciclos negativos. Este tiene una complejidad temporal de $O(n^3)$ con $n$ la cantidad de vertices. Y en nuestro caso, $n = 2 \times|C|$, el doble de la cantidad de cabinas, ya que cada una se separa en dos nodos.
 
 \end{enumerate}
-
-
 \end{document}
