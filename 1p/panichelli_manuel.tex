@@ -57,12 +57,14 @@
 
 \pagestyle{fancyplain}
 \fancyhf{}
+\setlength{\headheight}{15pt}
 
 \renewcommand{\headrulewidth}{0pt}
 
 \rhead{Manuel Panichelli}
 \chead{1er Parcial AED3: Parte Domiciliaria}
 \lhead{L.U. 72/18}
+\rfoot{\thepage}
 
 % Distancia del header (\chead) al texto
 \setlength{\headsep}{30pt}
@@ -74,6 +76,7 @@
 \begin{document}
 
 \maketitle
+\thispagestyle{fancyplain}
 \newpage
 
 \chapter*{Preámbulo}
@@ -408,7 +411,6 @@ Veamos los ejemplos del enunciado como digrafos y luego lo definimos formalmente
         \end{tikzpicture}    
     \end{subfigure}
     \caption{Ejemplo de un digrafo de actividades $D$, en \textcolor{cyan}{cyan} el ciclo máximo.}
-    \label{1/subciclos}
 \end{figure}
 
 Definimos $D = (V, X)$ como
@@ -651,7 +653,7 @@ Demostrar que e es un puente de G sii e pertenece a todo AG de G.}
     Veamos la ida y la vuelta.
 
     \begin{enumerate}
-        \item[$\Rightarrow$)] Sea $e$ puente de G. qvq pertenece a todo AG de G.\\
+        \item[$\Rightarrow$)] Sea $e$ puente de G. qvq pertenece a todo AG de G.
          
         Voy a probar el contrarecíproco, $e \notin T$ un AG de G $\implies$ $e$ no es puente de G
         \begin{align*}
@@ -664,7 +666,7 @@ Demostrar que e es un puente de G sii e pertenece a todo AG de G.}
         \end{align*}
 
         \item[$\Leftarrow$)] qvq $e$ pertenece a todo AG de G $\implies$ $e$ es puente de G.
-         
+
         Se que $e$ es puente $\iff G - e$ tiene más componentes conexas que G. Y si G es conexo, eso quiere decir que $G - e$ no lo es. Supongo que no es puente y que $e = (v, w)$.
         \begin{align*}
             e\ \text{no es puente} &\implies G - e\ \text{es conexo}    & (\text{G conexo})\\
