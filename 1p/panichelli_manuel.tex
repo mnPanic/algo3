@@ -652,13 +652,22 @@ Demostrar que e es un puente de G sii e pertenece a todo AG de G.}
 
     \begin{enumerate}
         \item[$\Rightarrow$)] Sea $e$ puente de G. qvq pertenece a todo AG de G.\\
-        Va por el absurdo: supongo que no pertenece a ningún árbol generador de G, y sea $T = (V, X_T)$ uno cualquiera. Como $e \notin T$, por Teo. (\ref{teo:tree-equiv}.\ref{teo:tree-equiv-circ}), $T + e$ tiene exactamente un circuito simple $C$, el cual contiene a e. Sea $f \in C, f \in X_T$. Como $f$ pertenece al único circuito de $T + e$, por Teo. (\ref{teo:tree-t-e-f}) el árbol $T' = T + e - f$ es árbol generador de G, y $e \in T'$. Pero estabamos suponiendo que $e$ no pertenecía a ningún AG de G. Abs! Entonces pertenece a todos.
+         
+        Voy a probar el contrarecíproco, $e \notin T$ un AG de G $\implies$ $e$ no es puente de G
+        \begin{align*}
+            e \notin T &\implies T+e\ \text{tiene un ciclo C que contiene a e} & \text{(Teo. \ref{teo:tree-equiv}.\ref{teo:tree-equiv-circ}, $T$ árbol)}\\
+            &\implies C \in G &(C \in T+e \subseteq G)\\
+            &\implies e \text{ pertenece a un ciclo de G}\\
+            &\implies G - e \text{ es conexo} &\text{(Lema \ref{lema:tree-g-e})}\\
+            &\implies G - e \text{ \textbf{no} tiene menos componentes conexas que G}\\
+            &\implies e \text{ \textbf{no} es puente de G.} &\text{(por def de puente)}
+        \end{align*}
 
         \item[$\Leftarrow$)] qvq $e$ pertenece a todo AG de G $\implies$ $e$ es puente de G.
          
-        Se que $e$ es puente $\iff G - e$ no es conexo. Supongo que no es puente y que $e = (v, w)$.
+        Se que $e$ es puente $\iff G - e$ tiene más componentes conexas que G. Y si G es conexo, eso quiere decir que $G - e$ no lo es. Supongo que no es puente y que $e = (v, w)$.
         \begin{align*}
-            e\ \text{no es puente} &\implies G - e\ \text{es conexo}    & (\text{por def})\\
+            e\ \text{no es puente} &\implies G - e\ \text{es conexo}    & (\text{G conexo})\\
             &\implies e \in C\ \text{un circuito simple de G,} & (\text{por Lema \ref{lema:tree-g-e}})
         \end{align*}
         y lo descompongo de la siguiente manera,
